@@ -11,10 +11,11 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Store {
+public class Store extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "store_id")
     private Long id;
 
     private String name;
@@ -25,6 +26,9 @@ public class Store {
 
     private double distance;
 
+    @ManyToOne
+    @JoinColumn(name = "partner_id")
+    private Partner partner;
 
     public static Store from(AddStoreDto addStoreDto) {
         return Store.builder()

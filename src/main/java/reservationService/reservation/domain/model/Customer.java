@@ -12,11 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Partner extends BaseTimeEntity{
+public class Customer extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "partner_id")
+    @Column(name = "customer_id")
     private Long id;
 
     private String name;
@@ -27,12 +27,11 @@ public class Partner extends BaseTimeEntity{
 
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Store> storeList;
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Reservation> reservationList;
 
-
-    public static Partner from(SignUpDto signUpDto) {
-        return Partner.builder()
+    public static Customer from(SignUpDto signUpDto) {
+        return Customer.builder()
                 .name(signUpDto.getName())
                 .email(signUpDto.getEmail())
                 .password(signUpDto.getPassword())

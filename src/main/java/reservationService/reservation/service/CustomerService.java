@@ -1,12 +1,13 @@
 package reservationService.reservation.service;
 
-import reservationService.reservation.domain.dto.AddStoreDto;
 import reservationService.reservation.domain.dto.LoginDto;
+import reservationService.reservation.domain.dto.MakeReservationDto;
 import reservationService.reservation.domain.dto.SignUpDto;
 
-public interface PartnerService {
+public interface CustomerService {
 
     String signUp(SignUpDto signUpDto);
     String login(LoginDto loginDto);
-    String registerStore(AddStoreDto addStoreDto);
+
+    String reservationStore(MakeReservationDto makeReservationDto);
 }
