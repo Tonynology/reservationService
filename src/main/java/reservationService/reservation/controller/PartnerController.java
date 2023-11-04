@@ -34,7 +34,6 @@ public class PartnerController {
         StringBuilder sb = new StringBuilder();
         sb.append(partnerService.registerStore(addStoreDto))
                 .append(" 님의 매장이 등록되었습니다.");
-
         return ResponseEntity.ok(sb.toString());
     }
 }

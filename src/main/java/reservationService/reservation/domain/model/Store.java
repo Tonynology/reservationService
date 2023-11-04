@@ -4,6 +4,7 @@ import lombok.*;
 import reservationService.reservation.domain.dto.AddStoreDto;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,6 +30,9 @@ public class Store extends BaseTimeEntity{
     @ManyToOne
     @JoinColumn(name = "partner_id")
     private Partner partner;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Review> reviewList;
 
     public static Store from(AddStoreDto addStoreDto) {
         return Store.builder()
