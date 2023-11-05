@@ -7,6 +7,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+/**
+ * 점포 예약 정보
+ */
 @Getter
 @Setter
 @NoArgsConstructor

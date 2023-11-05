@@ -3,6 +3,9 @@ package reservationService.reservation.domain.dto;
 import lombok.*;
 import reservationService.reservation.domain.model.Store;
 
+/**
+ * 점포 리스트 정보
+ */
 @Getter
 @Setter
 @NoArgsConstructor

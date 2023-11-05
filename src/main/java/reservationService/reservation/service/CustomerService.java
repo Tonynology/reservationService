@@ -1,9 +1,6 @@
 package reservationService.reservation.service;
 
-import reservationService.reservation.domain.dto.LoginDto;
-import reservationService.reservation.domain.dto.MakeReservationDto;
-import reservationService.reservation.domain.dto.SignUpDto;
-import reservationService.reservation.domain.dto.StoreListResponseDto;
+import reservationService.reservation.domain.dto.*;
 
 import java.util.List;
 
@@ -13,5 +10,6 @@ public interface CustomerService {
     String login(LoginDto loginDto);
     String reservationStore(MakeReservationDto makeReservationDto);
     List<StoreListResponseDto> getStoreList(String listType);
+    String visitComplete(VisitedStoreDto visitedStoreDto);
 
 }

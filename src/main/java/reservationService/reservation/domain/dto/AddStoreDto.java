@@ -5,14 +5,14 @@ import lombok.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ * 점포 등록 정보
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-/**
- * 점포 등록 정보
- */
 public class AddStoreDto {
 
     @Size(min = 11, message = "점주님의 이메일을 입력해주세요.")

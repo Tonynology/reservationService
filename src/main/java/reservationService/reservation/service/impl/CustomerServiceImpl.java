@@ -6,10 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reservationService.reservation.Type.StoreListType;
-import reservationService.reservation.domain.dto.LoginDto;
-import reservationService.reservation.domain.dto.MakeReservationDto;
-import reservationService.reservation.domain.dto.SignUpDto;
-import reservationService.reservation.domain.dto.StoreListResponseDto;
+import reservationService.reservation.domain.dto.*;
 import reservationService.reservation.domain.model.Customer;
 import reservationService.reservation.domain.model.Reservation;
 import reservationService.reservation.domain.model.Review;
@@ -17,9 +14,11 @@ import reservationService.reservation.domain.model.Store;
 import reservationService.reservation.exception.ErrorCode;
 import reservationService.reservation.exception.ServiceException;
 import reservationService.reservation.repository.CustomerRepository;
+import reservationService.reservation.repository.ReservationRepository;
 import reservationService.reservation.repository.StoreRepository;
 import reservationService.reservation.service.CustomerService;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
     private final StoreRepository storeRepository;
+    private final ReservationRepository reservationRepository;
 
     /**
      * 고객 가입
@@ -148,5 +148,36 @@ public class CustomerServiceImpl implements CustomerService {
     }
     private List<StoreListResponseDto> storeToResponseDto(List<Store> storeList) {
         return storeList.stream().map(x -> StoreListResponseDto.from(x)).collect(Collectors.toList());
+    }
+
+    /**
+     *  키오스트에 도착 확인
+     */
+    @Override
+    @Transactional
+    public String visitComplete(VisitedStoreDto visitedStoreDto) {
+        List<Reservation> reservationList = reservationRepository.findAllByPhoneNumber(visitedStoreDto.getPhoneNumber());
+
+        Optional<Reservation> optionalReservation = reservationList.stream().filter(reservation -> reservation.getStore().getName().equals(visitedStoreDto.getStoreName())
+                && reservation.isValid()).findFirst();
+
+        optionalReservation.ifPresentOrElse(
+                reservation -> {
+                    if (reservation.isRefused()) {
+                        throw new ServiceException(ErrorCode.RESERVATION_IS_REFUSED);
+                    }
+                    reservation.setValid(false);
+                    reservationRepository.save(reservation);
+
+                    LocalDateTime arrivalTime = reservation.getTime().minusMinutes(10);
+                    if (visitedStoreDto.getVisitTime().isAfter(arrivalTime)) {
+                        throw new ServiceException(ErrorCode.ARRIVAL_TOO_LATE);
+                    }
+                },
+                () -> {
+                    throw new ServiceException(ErrorCode.RESERVATION_NOT_FOUND);
+                }
+        );
+        return "고객의 도착을 확인하였습니다.";
     }
 }
