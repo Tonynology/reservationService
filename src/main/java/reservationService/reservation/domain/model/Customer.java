@@ -30,6 +30,9 @@ public class Customer extends BaseTimeEntity{
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Reservation> reservationList;
 
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Review> reviewList;
+
     public static Customer from(SignUpDto signUpDto) {
         return Customer.builder()
                 .name(signUpDto.getName())

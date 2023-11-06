@@ -15,6 +15,8 @@ public enum ErrorCode {
     RESERVATION_IS_REFUSED(400, "거절된 예약입니다."),
     RESERVATION_NOT_FOUND(400, "예약을 찾을 수 없습니다."),
     ARRIVAL_TOO_LATE(400, "너무 늦게 도착하였습니다"),
+    RESERVATION_NOT_USED(400, "예약을 사용하지 않았습니다"),
+    STORE_NOT_FOUND(400, "매장을 찾을 수 없습니다."),
     ;
 
     private final int code;

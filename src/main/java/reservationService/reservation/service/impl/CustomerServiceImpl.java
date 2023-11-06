@@ -15,11 +15,15 @@ import reservationService.reservation.exception.ErrorCode;
 import reservationService.reservation.exception.ServiceException;
 import reservationService.reservation.repository.CustomerRepository;
 import reservationService.reservation.repository.ReservationRepository;
+import reservationService.reservation.repository.ReviewRepository;
 import reservationService.reservation.repository.StoreRepository;
 import reservationService.reservation.service.CustomerService;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +34,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final PasswordEncoder passwordEncoder;
     private final StoreRepository storeRepository;
     private final ReservationRepository reservationRepository;
+    private final ReviewRepository reviewRepository;
 
     /**
      * 고객 가입
@@ -158,7 +163,8 @@ public class CustomerServiceImpl implements CustomerService {
     public String visitComplete(VisitedStoreDto visitedStoreDto) {
         List<Reservation> reservationList = reservationRepository.findAllByPhoneNumber(visitedStoreDto.getPhoneNumber());
 
-        Optional<Reservation> optionalReservation = reservationList.stream().filter(reservation -> reservation.getStore().getName().equals(visitedStoreDto.getStoreName())
+        Optional<Reservation> optionalReservation = reservationList.stream()
+                .filter(reservation -> reservation.getStore().getName().equals(visitedStoreDto.getStoreName())
                 && reservation.isValid()).findFirst();
 
         optionalReservation.ifPresentOrElse(
@@ -170,6 +176,7 @@ public class CustomerServiceImpl implements CustomerService {
                     reservationRepository.save(reservation);
 
                     LocalDateTime arrivalTime = reservation.getTime().minusMinutes(10);
+
                     if (visitedStoreDto.getVisitTime().isAfter(arrivalTime)) {
                         throw new ServiceException(ErrorCode.ARRIVAL_TOO_LATE);
                     }
@@ -179,5 +186,31 @@ public class CustomerServiceImpl implements CustomerService {
                 }
         );
         return "고객의 도착을 확인하였습니다.";
+    }
+
+    /**
+     * 고객 리뷰 남기기
+     */
+    @Override
+    @Transactional
+    public String registerReview(Long reservationId, ReviewDto reviewDto) {
+        Reservation reservation = reservationRepository.findById(reservationId).get();
+        if (reservation.isValid()) {
+            throw new ServiceException(ErrorCode.RESERVATION_NOT_USED);
+        }
+        Customer customer = reservation.getCustomer();
+        Store store = reservation.getStore();
+
+        Review review = Review.builder()
+                .customer(customer)
+                .store(store)
+                .reservation(reservation)
+                .rating(reviewDto.getRating())
+                .contents(reviewDto.getContents())
+                .build();
+
+        reviewRepository.save(review);
+
+        return "리뷰가 등록되었습니다.";
     }
 }

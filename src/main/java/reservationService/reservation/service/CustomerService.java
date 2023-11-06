@@ -12,4 +12,6 @@ public interface CustomerService {
     List<StoreListResponseDto> getStoreList(String listType);
     String visitComplete(VisitedStoreDto visitedStoreDto);
 
+    String registerReview(Long reservationId, ReviewDto reviewDto);
+
 }

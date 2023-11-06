@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import reservationService.reservation.domain.dto.MakeReservationDto;
+import reservationService.reservation.domain.dto.ReviewDto;
 import reservationService.reservation.domain.dto.StoreListResponseDto;
 import reservationService.reservation.domain.dto.VisitedStoreDto;
 import reservationService.reservation.service.CustomerService;
@@ -51,7 +52,7 @@ public class CustomerController {
     /**
      * 키오스트에 도착 정보 전달
      */
-    @PutMapping("reservation/list")
+    @PutMapping("/reservation/list")
     public ResponseEntity<?> customerVisit(
             @Valid VisitedStoreDto visitedStoreDto, BindingResult bindingResult
     ) {
@@ -59,5 +60,15 @@ public class CustomerController {
             return ValidUtil.responseErrorMessage(bindingResult);
         }
         return ResponseEntity.ok(customerService.visitComplete(visitedStoreDto));
+    }
+
+    @PostMapping("/reservation/{reservationId}/review")
+    public ResponseEntity<?> giveReview(
+            @PathVariable Long reservationId, ReviewDto reviewDto, BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            return ValidUtil.responseErrorMessage(bindingResult);
+        }
+        return ResponseEntity.ok(customerService.registerReview(reservationId, reviewDto));
     }
 }

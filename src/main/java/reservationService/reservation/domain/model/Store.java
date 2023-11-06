@@ -34,6 +34,9 @@ public class Store extends BaseTimeEntity{
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviewList;
 
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Reservation> reservationList;
+
     public static Store from(AddStoreDto addStoreDto) {
         return Store.builder()
                 .name(addStoreDto.getName())
